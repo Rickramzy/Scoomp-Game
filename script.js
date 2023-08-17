@@ -1,5 +1,6 @@
 'use-strict';
-const quizQuestions = [
+
+const questions = [
     {
         question: "What is the capital of Nigeria?",
         answers: [
@@ -56,17 +57,18 @@ const quizQuestions = [
 const startButton = document.getElementById('start-btn');
 const finishButton = document.getElementById('finish-btn');
 const nextButton = document.getElementById('next-btn');
-const instructP = document.getElementsByClassName('instruct');
+const instruct = document.querySelector('.instruct');
 const questionSection = document.getElementById('question-holder');
 const questionLine = document.getElementById('question');
-const scoring = document.getElementById('answer');
+const scoring = document.getElementById('score');
 const quiz = document.getElementById('quiz');
+const answerColumn = document.getElementById('answer');
 let shuffledQuestion, currentQuestionIndex;
 let score = 0;
 
 //event listeners for when an event occurs
 startButton.addEventListener("click", startGame);
-finishButton.addEventListener("clic"k, endGame);
+finishButton.addEventListener("click", endGame);
 nextButton.addEventListener("click", ()=>{
     currentQuestionIndex++;
     setNextQuestion()
@@ -77,10 +79,10 @@ function startGame() {
     startButton.classList.add('hide');
     finishButton.classList.add('hide');
     questionSection.classList.remove('hide');
-    shuffledQuestion = questions.sort(()=>Math.random()-0.6);
+    shuffledQuestion = questions.sort(() => Math.random() - 0.6);
     currentQuestionIndex = 0;
     scoring.innerText = "Score: " + score;
-    setNextQuestion()
+    setNextQuestion();
 }
 
 function setNextQuestion() {
@@ -88,3 +90,74 @@ function setNextQuestion() {
     showQuestion(shuffledQuestion[currentQuestionIndex]);
 }
 
+function showQuestion(question) {
+    questionLine.innerText = question.question;
+    question.answers.forEach((answer) => {
+        const button =  document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add('btn')
+        if(answer.correct) {
+            button.dataset.correct = answer.correct;
+        }button.addEventListener("click", selectAnswer);
+        answerColumn.appendChild(button);
+    });
+}
+
+function resetState() {
+    nextButton.classList.add('hide');
+    while (answerColumn.firstChild) {
+        answerColumn.removeChild(answerColumn.firstChild);
+    }
+}
+
+function selectAnswer(element) {
+    let selectedButton = element.target;
+    const correct = selectedButton.dataset.correct;
+    setStatusClass(document.body, correct);
+    Array.from(answerColumn.children).forEach((button)=>{
+        setStatusClass(button, button.dataset.correct);
+        button.disabled = true;
+    });
+    if (shuffledQuestion.length > currentQuestionIndex+1) {
+        nextButton.classList.remove("hide");
+        instruct.classList.add("hide");
+    }
+    else {
+        finishButton.classList.remove("hide");
+    }
+    if(correct === "true") {
+        scoring.innerText = score += 1;
+        scoring.innerText = "Score: "+ "/"+questions.length;
+    }
+    else {
+        scoring.innerText = "Score: "+ "/"+questions.length;
+    }
+}
+
+// handles the status of a button
+function setStatusClass(element, correct) {
+    clearStatusClass(element);
+    if (correct) {
+        element.classList.add("correct")
+    } else {
+        element.classList.add("wrong");
+    }
+}
+
+function clearStatusClass(element) {
+    element.classList.remove("correct")
+    element.classList.remove("wrong")
+}
+
+//
+function endGame() {
+    finishButton.classList.add("hide");
+    questionSection.classList.add("hide");
+    scoring.classList.add("hide");
+    totalScore = document.createElement("p");
+    let end = "Total";
+    totalScore.innerText = end;
+    totalScore.classList.add("question1");
+    quiz.appendChild(totalScore);
+    quiz.removeChild(quiz);
+}

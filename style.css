@@ -28,7 +28,7 @@
 body{
     height: 100%;
     background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("./assets/images/3d-rendering-mystery-box.jpg"); 
-    /* background-repeat: no-repeat; */
+    background-repeat: no-repeat; 
     background-size: cover;
     display: flex;
     align-items: center;
